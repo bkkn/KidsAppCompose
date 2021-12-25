@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="persons_drawable_list">
+        <item>@drawable/egor</item>
+        <item>@drawable/eugen</item>
+        <item>@drawable/lisa</item>
+        <item>@drawable/marina</item>
+        <item>@drawable/me</item>
+        <item>@drawable/nastya</item>
+        <item>@drawable/nikola</item>
+        <item>@drawable/nina</item>
+        <item>@drawable/masha</item>
+        <item>@drawable/sasha</item>
+        <item>@drawable/sereja</item>
+        <item>@drawable/sonya2</item>
+        <item>@drawable/tanya</item>
+        <item>@drawable/vanes</item>
+        <item>@drawable/verona</item>
+        <item>@drawable/vitek</item>
+        <item>@drawable/volodja</item>
+        <item>@drawable/ira</item>
+        <item>@drawable/vanya_macnev</item>
+        <item>@drawable/nikita</item>
+        <item>@drawable/vika</item>
+        <item>@drawable/mama_vivat</item>
+        <item>@drawable/papa_mama</item>
+        <item>@drawable/egor_bakaikin</item>
+    </array>
+
+</resources>

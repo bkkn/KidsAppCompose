@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Для детей</string>
+    <string name="kolya_route">Коля</string>
+    <string name="persons_route">Persons</string>
+    <string name="content_route">Content</string>
+    <string name="nina_route">Нина</string>
+    <string name="masha_route">Маша</string>
+    <string name="default_route">По умолчанию</string>
+</resources>
