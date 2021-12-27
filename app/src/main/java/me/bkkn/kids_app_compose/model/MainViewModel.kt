@@ -7,21 +7,66 @@ import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.ui.layout.ContentScale
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import me.bkkn.kids_app_compose.R
 import me.bkkn.kids_app_compose.persons.Person
 
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.*
+import me.bkkn.kids_app_compose.TAG
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.nio.charset.Charset
 
-class MainViewModel : ViewModel(), LifecycleObserver {
+
+class MainViewModel(application: Application) : AndroidViewModel(application), LifecycleObserver {
 
     private lateinit var textToSpeechEngine: TextToSpeech
     private lateinit var startForResult: ActivityResultLauncher<Intent>
+    private lateinit var dictResId: Integer
+    private lateinit var inputStream: InputStream
+
+    init {
+//        val inputStream = application.resources.openRawResource(R.raw.russian)
+//        //val text = inputStream.readBytes().toString(Charset.forName("windows-1251"))
+//        //Log.d("@@@ vm", text)
+//        val buffer = inputStream.bufferedReader(Charset.forName("windows-1251"))
+//        var nextLine = buffer.readLine()
+//        while (nextLine != null) {
+//             nextLine = buffer.readLine()
+//
+//            if (nextLine.trim().lowercase().compareTo("Tамара") == 0)
+//                Log.d(TAG, "found мама")
+//        }
+//        if (nextLine == null)
+//            buffer.close()
+
+        val inputStreamFemNames = application.resources.openRawResource(R.raw.famale_names)
+        val bufferFemNames = inputStreamFemNames.bufferedReader(Charset.defaultCharset())
+        var nextLineFemNames = bufferFemNames.readLine()
+        while (nextLineFemNames != null) {
+            nextLineFemNames = bufferFemNames.readLine()
+
+            if (nextLineFemNames.trim().lowercase().compareTo("тамара") == 0){
+                Log.d(TAG, "found мама")
+                break;
+            }
+        }
+        if (nextLineFemNames == null)
+            bufferFemNames.close()
+    }
+//    init {
+//        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+//            Log.v(TAG,"Permission is granted");
+//            //File write logic here
+//            inputStream = application.resources.openRawResource(R.raw.russian_dict)
+//
+//        }
+//    }
 
     fun initial(
         engine: TextToSpeech, launcher: ActivityResultLauncher<Intent>
@@ -41,7 +86,7 @@ class MainViewModel : ViewModel(), LifecycleObserver {
         })
     }
 
-    fun speak(text: String) = viewModelScope.launch{
+    fun speak(text: String) = viewModelScope.launch {
         textToSpeechEngine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
     }
 
@@ -123,59 +168,28 @@ class MainViewModel : ViewModel(), LifecycleObserver {
         )
     }
 
-//    fun initTts(context: Context) {
-//        tts = TextToSpeech(context, this)
+//    fun setDictResourceId(resId: Int) {
+//        this.dictResId = Integer(resId)
 //    }
 
-//    var tts: TextToSpeech? = null
-//
-//    override fun onInit(status: Int) {
-//        if (status == TextToSpeech.SUCCESS) {
-//            // set US English as language for tts
-//
-//////            val result = tts!!.setLanguage(Locale("RU").language)
-////            val lang = Locale("US").language
-////            val local = Locale("ru")
-//            val result = tts!!.setLanguage(Locale("ru"))
-//
-//            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-//                Log.e("TTS", "The Language specified is not supported!")
-//            } else {
-////                buttonSpeak!!.isEnabled = true
-//            }
-//
-//        } else {
-//            Log.e("TTS", "Initilization Failed!")
-//        }
-//
-//        speakOut()
-//    }
-//
-//
-//    fun speakOut() {
-//        val text = "Стоп Стоп Стоп Стоп"
-//        tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
-//    }
 
-//    public override fun onDestroy() {
-//        // Shutdown TTS
-//        if (tts != null) {
-//            tts!!.stop()
-//            tts!!.shutdown()
-//        }
-//        super.onDestroy()
-//    }
-//    fun onPersonChange(newPerson: Int) {
-//        if (mediaPlayer.isPlaying)
-//            mediaPlayer.stop()
-//        currentPersonState.value = newPerson
-//    }
-
-//    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    //    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
 //    protected fun onLifeCycleStop() {
 //        if(mediaPlayer.isPlaying)
 //            mediaPlayer.stop()
 //    }
+    fun findInDictionary(word: String) {
+        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+        var eachline: String = bufferedReader.readLine()
+        while (eachline != null) {
+            // `the words in the file are separated by space`, so to get each words
+            val words = eachline.split(" ").toTypedArray()
+            eachline = bufferedReader.readLine()
+        }
+    }
 
+    fun setInputStream(inputStream: InputStream) {
+        this.inputStream = inputStream
+    }
 
 }

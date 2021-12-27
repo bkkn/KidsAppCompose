@@ -3,6 +3,7 @@
     package="me.bkkn.kids_app_compose">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <queries>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />

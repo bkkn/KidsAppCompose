@@ -1,6 +1,8 @@
 package me.bkkn.kids_app_compose
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -55,6 +57,11 @@ import me.bkkn.kids_app_compose.primer.Pronounceable
 import me.bkkn.kids_app_compose.ui.theme.KidsAppComposeTheme
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.core.app.ActivityCompat
+
+import android.os.Build
+import java.nio.charset.Charset
+
 
 var list = mutableStateListOf<Pronounceable>()
 var fontSize = mutableStateOf(64)
@@ -125,15 +132,56 @@ fun BottomNavigationBar(navController: NavHostController) {
 //lateinit var viewModel : MainViewModel
 var personIds: ArrayList<Int> = arrayListOf()
 
+val TAG = "@@@"
 
-class MainActivity : ComponentActivity(){
+class MainActivity : ComponentActivity() {
 
-    private val model:MainViewModel by viewModels()
+    private val model: MainViewModel by viewModels()
 
+//    fun isStoragePermissionGranted(): Boolean {
+//        return if (Build.VERSION.SDK_INT >= 23) {
+//            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                == PackageManager.PERMISSION_GRANTED
+//            ) {
+//                Log.v(TAG, "Permission is granted")
+//                true
+//            } else {
+//                Log.v(TAG, "Permission is revoked")
+//                ActivityCompat.requestPermissions(
+//                    this,
+//                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+//                    1
+//                )
+//                false
+//            }
+//        } else { //permission is automatically granted on sdk<23 upon installation
+//            Log.v(TAG, "Permission is granted")
+//            true
+//        }
+//    }
     @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+//    val inputStream = application.resources.openRawResource(R.raw.russian_dict)
+//    val text = inputStream.readBytes().toString(Charset.defaultCharset())
+//    Log.d(TAG, text)
+
+//        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+//            Log.v(TAG, "Permission is granted");
+//            //File write logic here
+//            val inputStream = application.resources.openRawResource(R.raw.russian_dict)
+//            model.setInputStream(inputStream)
+//        } else {
+//            if(isStoragePermissionGranted()){
+//                val inputStream = application.resources.openRawResource(R.raw.russian_dict)
+//                model.setInputStream(inputStream)
+//            }
+//        }
+
+//        val resId = resources.getIdentifier("russian_dict.txt","raw", getPackageName())
+
         model.initial(textToSpeechEngine, startForResult)
         val arr = resources.obtainTypedArray(R.array.persons_drawable_list)
         (0 until arr.length()).forEach {
@@ -212,7 +260,7 @@ fun MainScreen(context: Context, arr: TypedArray, viewModel: MainViewModel = vie
 
             Box(modifier = Modifier.fillMaxSize()) {
                 GlideImage(
-                    imageModel =" kolya.imgUrl",
+                    imageModel = " kolya.imgUrl",
                     // Crop, Fit, Inside, FillHeight, FillWidth, None
                     contentScale = ContentScale.Crop,
                     // shows an image with a circular revealed animation.

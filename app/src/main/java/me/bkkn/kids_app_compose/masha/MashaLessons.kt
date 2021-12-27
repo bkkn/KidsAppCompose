@@ -1,6 +1,7 @@
 package me.bkkn.kids_app_compose
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -14,24 +15,26 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.*
 import me.bkkn.kids_app_compose.model.MainViewModel
 import me.bkkn.kids_app_compose.primer.Pronounceable
 import me.bkkn.kids_app_compose.primer.Syllable
 import me.bkkn.kids_app_compose.primer.Word
+import java.io.File
 import java.net.URL
 import java.nio.charset.Charset
 
 //import com.github.demidko.aot.WordformMeaning.lookupForMeanings
 
-
+val MYTAG : String = "@@@"
 val elev = 10.dp
 val fntSize = 32.sp
 var wordList = mutableStateListOf<String>()
 var wordDictLesson1 =
     mutableListOf<String>("папа", "мама", "наша", "Ната", "Маша", "Паша", "Наташа", "панама")
 var wordDictLesson2 =
-    mutableListOf<String>("папа", "мама", "наша", "Ната", "Маша", "Паша", "Наташа", "панама")
+    mutableListOf<String>("папа", "мама", "наша", "Ната", "Маша", "Паша", "Наташа", "панама","рада","тара","дама","рама","рана")
 var namesDictLesson = mutableListOf<String>(
     "Даша",
     "Капа",
@@ -44,7 +47,7 @@ var namesDictLesson = mutableListOf<String>(
     "Тамара"
 )
 var buffer = ""
-var sequenceList = mutableListOf<String>();
+var sequenceList = ArrayDeque<String>();// mutableListOf<String>();
 fun wordCheck(context: Context, word: String): Boolean {
 
     return 0 != context.resources.getIdentifier(
@@ -131,7 +134,7 @@ fun Lesson2(context: Context, viewModel: MainViewModel) {
         Column(Modifier.fillMaxWidth(), Arrangement.Center, Alignment.CenterHorizontally) {
 
             for (it in wordList) {
-                if (wordCheck(context, it))
+                //if (wordCheck(context, it))
                     WordItem(context, viewModel, Word(it))
 //                else
 //                    wordList.remove(it)
@@ -178,19 +181,11 @@ fun RowItem(
         elevation = elev,
         shape = RoundedCornerShape(10),
         onClick = {
-            sequenceList.add(text.text())
+            sequenceList.addLast(text.text())
+            if(sequenceList.size > 10)
+                sequenceList.removeFirst()
             addWord(scope);
-            // text.pronounce(context = context)
             viewModel.speak(text.text());
-//            if (buffer.length == 2)
-//                buffer += text.text()
-//            else
-//                buffer = text.text()
-//
-//            val found = true
-//            if (buffer.length > 3) {
-//                wordList.put(buffer, buffer)
-//            }
         }
     )
     {
@@ -207,11 +202,7 @@ fun RowItem(
 }
 
 fun addWord(scope: CoroutineScope) {
-//    val lastWord = wordList.last()
-
     findAllWords(scope)
-
-    sequenceList
 }
 
 private suspend fun httpGet(myURL: String?): String? {
@@ -222,8 +213,16 @@ private suspend fun httpGet(myURL: String?): String? {
     return result
 }
 
+fun readFileLineByLineUsingForEachLine(fileName: String)
+        = File(fileName).forEachLine { Log.d(MYTAG, it) }
 
 fun findAllWords(scope: CoroutineScope) {
+
+//    viewModel()
+//    getResources().getIdentifier("FILENAME_WITHOUT_EXTENSION",
+//        "raw", getPackageName());
+
+    readFileLineByLineUsingForEachLine("/Users/bkkn/AndroidStudioProjects/KidsAppCompose/app/src/main/res/raw/russian_dict.txt")
 
     var allWords: String
 //    GlobalScope.launch(Dispatchers.Main) {
@@ -243,7 +242,6 @@ fun findAllWords(scope: CoroutineScope) {
             if (!found.isEmpty()){
                 if(wordList.find { it.lowercase() == wordCandidate.lowercase() } == null)
                     wordList.add(found)
-
             }
         }
         if (foundInNames != null) {
@@ -262,7 +260,6 @@ fun findAllWords(scope: CoroutineScope) {
             if (!found.isEmpty()){
                 if(wordList.find { it.lowercase() == wordCandidate.lowercase() } == null)
                     wordList.add(found)
-                return
             }
         }
         if (foundInNames != null) {
